@@ -1,0 +1,37 @@
+Config { --font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
+       font = "xft:DejaVu Sans Mono:size=9:bold:antialias=true"
+       , additionalFonts = ["xft:DejaVu Sans Mono:size=15:bold:antialias=true"]
+       , bgColor = "black"
+       , fgColor = "grey"
+       , position = TopW L 100
+       , lowerOnStart = True
+       , commands = [ Run Date "%a %b %_d %k:%M" "date" 10
+                    , Run StdinReader
+                    , Run Weather "KBOS" [ "--template", "<fc=#00ff00><tempC></fc>°C"
+                             ] 36000
+                    , Run BatteryP ["/sys/class/power_supply/BAT0"]  [ "-t", "AC: <acstatus> <timeleft> (<left>%)"
+                             , "-L", "10", "-H", "80", "-p", "3"
+                             , "--", "-O", "<fc=#00ff00>[on]</fc>", "-o", "<fc=orange>[off]</fc>"
+                             , "-f", "AC/online"
+                             , "-L", "-15", "-H", "-5"
+                             , "-l", "red", "-m", "cyan", "-h", "green"]
+                               50
+                    , Run Com "/bin/bash" ["-c", "get_vol"] "volume" 10
+                    , Run Com "/bin/bash" ["-c", "~/.xmonad/scripts/moscowtime"] "msktime" 10
+		    , Run CatInt 0 "/home/tolmak/.tgunread" [] 50
+                    , Run Wireless "wlp3s0" 
+                          [ "-a", "l"
+                          , "-t", "<fc=#8888FF>wlp3s0:</fc> <fc=#00ff00><essid></fc>"
+                          , "-L", "50"
+                          , "-H", "75"
+                          , "-l", "red"
+                          , "-n", "yellow"
+                          , "-h", "green"
+                          ] 10
+                    , Run Kbd [("us", "<fc=#ffffff>U</fc><fc=#0000ff>S</fc>"), ("ru", "<fc=#ff0000>RU</fc>"), ("ua", "<fc=#ffff00>U</fc><fc=#0000ff>A</fc>")]
+                    , Run Locks
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%StdinReader% }{ %locks% | %kbd% | tg: <fc=#00ff00>%cat0%</fc> | %wlp3s0wi% | %msktime% <fn=1><fc=#ff0000>☭</fc></fn> | %battery% | Vol: <fc=#00ff00>%volume%</fc> | <fc=#ee9a00>%date%</fc>"
+       }
